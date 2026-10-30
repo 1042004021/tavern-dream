@@ -14,8 +14,8 @@ android {
         applicationId = "com.taverndream"
         minSdk = 28
         targetSdk = 34
-        versionCode = 10
-        versionName = "0.5.1"
+        versionCode = 11
+        versionName = "0.6.0"
         ndk {
             abiFilters += "arm64-v8a"
         }

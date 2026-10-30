@@ -260,7 +260,9 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
         if (card.description.isNotBlank()) append("角色描述：").append(card.description.take(2200)).append('\n')
         if (card.personality.isNotBlank()) append("性格：").append(card.personality.take(400)).append('\n')
         if (card.scenario.isNotBlank()) append("场景设定：").append(card.scenario.take(600)).append('\n')
-        if (card.firstMes.isNotBlank()) append("开场白：").append(card.firstMes.take(700)).append('\n')
+        if (card.firstMes.isNotBlank()) append("开场白：").append(
+            PromptBuilder.render(card.firstMes.take(700), card.name, settings.userName)
+        ).append('\n')
         append("玩家名字：").append(settings.userName)
     }
 
@@ -321,7 +323,8 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
                 ChatStore.load(ctx, card.id)
             }.toMutableList()
             if (saved.isEmpty()) {
-                val greet = card.greeting()
+                // 角色卡里的开场白常带 {{char}}/{{user}} 占位符，必须渲染后再入库
+                val greet = PromptBuilder.render(card.greeting(), card.name, settings.userName)
                 if (greet.isNotBlank()) saved.add(ChatMessage("assistant", greet))
             }
             messages = saved
@@ -384,10 +387,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
         val c = current ?: return
         val input = text.trim()
         if (input.isEmpty() || busy) return
-        if (imageBusy) {
-            toast = "正在画插图，稍等一下"
-            return
-        }
+        // 生图在后台跑，不再阻塞聊天：出完图会自己插到对话里
         val useLocal = settings.chatBackend == "local"
         if (!useLocal && settings.apiKey.isBlank()) {
             toast = "请先在设置里填写 API Key，或切换成本地模型"
@@ -711,6 +711,13 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
             if (model == null || !SdModelManager.isDownloaded(getApplication<Application>(), model)) {
                 throw IllegalStateException("生图模型未下载，请到设置页下载")
             }
+            // SDXL 预加载就吃 5GB+：内存不够时直接拒绝，避免把整机拖死（已踩过两次）
+            if (model.isSdxl) {
+                val availMb = withContext(Dispatchers.IO) { availableMemoryMb() }
+                if (availMb in 1 until 3000) {
+                    throw IllegalStateException("可用内存仅 ${availMb}MB，SDXL 至少需要 3GB，请先清理后台再试")
+                }
+            }
             if (!withContext(Dispatchers.IO) { sdClient.healthy() }) {
                 SdBackendService.start(getApplication(), model.id)
                 // SDXL 模型 4.2GB，首次加载（MNN CLIP + 2.6GB QNN UNET）比 SD1.5 慢得多
@@ -812,6 +819,15 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
         val anchors = if (settings.lockAppearance) characterMeta?.tags.orEmpty() else ""
         return SdPrompts.compose(anchors, settings.styleTags, text)
     }
+
+    /** 读取 /proc/meminfo 的 MemAvailable（MB）；读不到返回 -1。 */
+    private fun availableMemoryMb(): Long = runCatching {
+        java.io.File("/proc/meminfo").readLines()
+            .firstOrNull { it.startsWith("MemAvailable:") }
+            ?.filter { it.isDigit() }
+            ?.toLongOrNull()
+            ?.div(1024) ?: -1L
+    }.getOrDefault(-1L)
 
     /** 固定种子时同一角色每张构图接近（脸更稳）；否则每张随机。 */
     private fun imageSeed(): Long {

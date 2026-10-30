@@ -166,12 +166,29 @@ fun ChatScreen(vm: AppViewModel, card: CharacterCard, snackbar: SnackbarHostStat
         },
         bottomBar = {
             Surface(tonalElevation = 3.dp) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
-                    verticalAlignment = Alignment.Bottom,
-                ) {
+                Column {
+                    // 生图在后台跑，进度只放在输入栏上方，不占聊天内容
+                    if (vm.imageBusy) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 14.dp, end = 14.dp, top = 6.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            CircularProgressIndicator(Modifier.size(12.dp), strokeWidth = 1.5.dp)
+                            Text(
+                                "  后台画图中 ${vm.imageProgress}",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                    }
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
+                        verticalAlignment = Alignment.Bottom,
+                    ) {
                     OutlinedTextField(
                         value = input,
                         onValueChange = { input = it },
@@ -198,6 +215,7 @@ fun ChatScreen(vm: AppViewModel, card: CharacterCard, snackbar: SnackbarHostStat
                         enabled = !vm.busy && input.isNotBlank(),
                     ) {
                         Icon(Icons.AutoMirrored.Filled.Send, contentDescription = "发送")
+                    }
                     }
                 }
             }
@@ -239,20 +257,6 @@ fun ChatScreen(vm: AppViewModel, card: CharacterCard, snackbar: SnackbarHostStat
                             vm.toast = "已复制"
                         },
                     )
-                }
-            }
-            if (vm.imageBusy) {
-                item {
-                    Row(
-                        Modifier.padding(8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        CircularProgressIndicator(Modifier.size(16.dp), strokeWidth = 2.dp)
-                        Text(
-                            " 正在画插图 ${vm.imageProgress}",
-                            style = MaterialTheme.typography.labelMedium,
-                        )
-                    }
                 }
             }
             if (vm.busy && vm.streamingText.isEmpty()) {

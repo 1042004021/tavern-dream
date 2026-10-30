@@ -179,6 +179,9 @@ class SdBackendService : Service() {
         val modelDir = SdModelManager.dir(this, model.id)
 
         val cmd = mutableListOf<String>()
+        // SDXL 4.2GB 模型在 12GB 机器上一预加载 UNET（2.6GB）+ VAE 就把 zram 打死（实测整机卡死）
+        // --lowram 让内核按需加载/用完即释放，是 Local Dream 能跑起来的关键
+        if (model.isSdxl) cmd += "--lowram"
         if (model.runOnCpu) {
             cmd += listOf(
                 "--clip", File(modelDir, "clip.mnn").absolutePath,
