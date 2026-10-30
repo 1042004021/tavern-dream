@@ -1,0 +1,20 @@
+*.iml
+.gradle/
+/local.properties
+/.idea/
+.DS_Store
+/build
+/app/build
+/captures
+.externalNativeBuild
+.cxx
+# 二进制不入库，见 doc/资料/native库提取说明.md
+/app/src/main/jniLibs/
+/app/src/main/assets/qnnlibs/
+
+# 素材：local-dream 原包、MNN 源码（体积大，不入库）
+/素材/
+# 工作区：真机测试截图、日志、临时脚本
+/工作区/
+# 打包产物：APK 体积大，不入库
+/dist/
