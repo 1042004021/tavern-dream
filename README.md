@@ -4,7 +4,10 @@
 生图内核内置了 [local-dream](https://github.com/xororz/local-dream) 2.4.3 的端侧 Stable Diffusion，
 对话可选**外部 API**或**本地 MNN-LLM 模型**（一个 APK，不需要再装第二个 App）。
 
-> 仅个人自用、不分发。local-dream 为 CC BY-NC 4.0（禁止商业使用）。
+> **非商业源码公开项目，不是可无条件商用的 OSI 开源软件。**
+> 原创及有权授权的改编部分采用 CC BY-NC 4.0，第三方组件保留各自许可。
+> 见 [许可证范围](LICENSE) 与 [第三方来源声明](THIRD_PARTY_NOTICES.md)。
+> 目前只提供源码与本地构建说明；含 QNN 等运行库的 APK 尚未完成再分发条款核对，不公开发布附件。
 
 ## 功能
 

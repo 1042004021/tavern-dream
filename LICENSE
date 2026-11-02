@@ -1,0 +1,21 @@
+Tavern Dream — 许可证适用范围
+
+本项目原创部分及对 local-dream 的改编部分，在贡献者有权授权的范围内，
+采用 Creative Commons Attribution-NonCommercial 4.0 International
+（CC BY-NC 4.0，署名—非商业性使用 4.0 国际）许可。
+
+完整条款：LICENSES/CC-BY-NC-4.0-local-dream.txt
+官方条款：https://creativecommons.org/licenses/by-nc/4.0/legalcode
+
+分享或改编上述内容时，应提供适当署名、许可证链接，并注明所做修改；
+不得将其用于商业目的。非商业性使用不等同于“免费使用”或“个人使用”，
+其具体范围以许可证原文为准。
+
+本许可不覆盖第三方代码、商标、模型权重、运行库、角色卡或图片。
+第三方组件继续遵守各自许可证，详见 THIRD_PARTY_NOTICES.md。
+尤其是 app/src/main/cpp/mnn/include/ 中的 MNN 头文件遵循 Apache-2.0，
+其原有授权不因本文件而变更。
+
+CC BY-NC 4.0 含有非商业限制，不是 OSI 批准的开源许可证。
+本仓库应描述为“非商业源码公开项目”，而非可无条件商用的开源软件。
+本项目按现状提供，不提供任何保证；具体免责以适用许可证原文为准。
