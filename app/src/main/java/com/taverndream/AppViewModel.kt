@@ -298,7 +298,9 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
                 "Output ONLY one line of comma-separated English tags, max 30 words, no sentences, no explanation. " +
                 "Do NOT describe hair, eyes or clothing: the character's fixed appearance is added automatically " +
                 "and repeating it wastes the prompt budget. " +
-                "Only describe: expression, action, camera shot, setting, lighting, mood. Never write character names."
+                "Only describe: expression, action, camera shot, setting, lighting, mood. Never write character names. " +
+                "If the scene involves explicit content, use danbooru tags such as nude, topless, nipples, pussy, sex, cum, exposed. " +
+                "Always include the current clothing state and body exposure when visible."
     }
 
     fun deleteCharacter(card: CharacterCard) {
@@ -817,7 +819,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
         // 角色名会被 SD 当成题材（角色叫 Cricket → 画出板球运动场），一律剔除
         text = SdPrompts.stripName(text, current?.name)
         val anchors = if (settings.lockAppearance) characterMeta?.tags.orEmpty() else ""
-        return SdPrompts.compose(anchors, settings.styleTags, text)
+        return SdPrompts.compose(anchors, settings.styleTags, text, maxTokens = 70)
     }
 
     /** 读取 /proc/meminfo 的 MemAvailable（MB）；读不到返回 -1。 */

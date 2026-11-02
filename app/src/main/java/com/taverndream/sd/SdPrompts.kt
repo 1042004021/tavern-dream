@@ -93,10 +93,11 @@ object SdPrompts {
     fun compose(anchors: String, style: String, scene: String, maxTokens: Int = 70): String {
         val seen = HashSet<String>()
         val out = mutableListOf<String>()
-        out += takeTags(anchors, minOf(30, maxTokens / 2), seen)
-        out += takeTags(style, 12, seen)
+        // 外观锚定只留稳定特征（脸、发色），服装留给场景
+        out += takeTags(anchors, minOf(18, maxTokens / 3), seen)
+        out += takeTags(style, 8, seen)
         val used = estimateTokens(out.joinToString(", "))
-        out += takeTags(scene, (maxTokens - used - 8).coerceAtLeast(12), seen)
+        out += takeTags(scene, (maxTokens - used - 6).coerceAtLeast(12), seen)
         val withQuality = out + "masterpiece, best quality"
         return (if (estimateTokens(withQuality.joinToString(", ")) <= maxTokens) withQuality else out)
             .joinToString(", ")

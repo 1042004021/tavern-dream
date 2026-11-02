@@ -112,6 +112,14 @@ class Settings(context: Context) {
         get() = sp.getBoolean("fixedSeed", false)
         set(v) = sp.edit().putBoolean("fixedSeed", v).apply()
 
+    /**
+     * 成人向内容：放开配图改写对露骨描写的限制。
+     * 自用离线场景，默认关闭；开启后场景/动作会按 danbooru tag 直白描述。
+     */
+    var nsfwMode: Boolean
+        get() = sp.getBoolean("nsfwMode", false)
+        set(v) = sp.edit().putBoolean("nsfwMode", v).apply()
+
     /** 固定的画风 tag（英文），用来保证每次出图画风一致。 */
     var styleTags: String
         get() = sp.getString("styleTags", "anime style, clean lineart, soft lighting") ?: ""
